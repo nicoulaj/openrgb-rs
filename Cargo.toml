@@ -1,0 +1,29 @@
+[package]
+name = "openrgb"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.56"
+authors = ["Julien Nicoulaud <julien.nicoulaud@gmail.com>"]
+description = "OpenRGB SDK client"
+documentation = "https://docs.rs/openrgb"
+homepage = "https://github.com/nicoulaj/openrgb-rs"
+repository = "https://github.com/nicoulaj/openrgb-rs"
+license = "GPL-2.0"
+keywords = ["RGB", "LED", "gaming"]
+categories = ["network-programming", "game-development"]
+
+[dependencies]
+array2d = "0.2.1"
+async-trait = "0.1.52"
+enum-primitive-derive = "0.2.2"
+flagset = "0.4.2"
+log = "0.4.14"
+num-traits = "0.2.14"
+rgb = "0.8.31"
+thiserror = "1.0.30"
+tokio = { version = "1.15.0", default-features = false, features = ["rt-multi-thread", "net", "sync", "io-util"] }
+
+[dev-dependencies]
+simplelog = "0.11.1"
+tokio-test = "0.4.2"
+tokio = { version = "1.15.0", default-features = false, features = ["macros"] }

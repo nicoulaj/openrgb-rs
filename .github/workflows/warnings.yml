@@ -1,0 +1,27 @@
+name: warnings
+
+on: [push, pull_request]
+
+env:
+  CARGO_TERM_COLOR: always
+  RUSTFLAGS: --deny warnings
+
+jobs:
+  warnings:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up cargo cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.cargo/registry
+          key: cargo-${{ hashFiles('Cargo.lock') }}
+          restore-keys: |
+            cargo-
+
+      - name: Build
+        run: cargo build --verbose

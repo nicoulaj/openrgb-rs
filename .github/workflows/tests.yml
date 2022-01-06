@@ -1,0 +1,37 @@
+name: tests
+
+on: [push, pull_request]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  tests:
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+        rust: ['1.56', stable, nightly]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Set up Rust toolchain
+        uses: hecrj/setup-rust-action@v1
+        with:
+          rust-version: ${{ matrix.rust }}
+
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up cargo cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.cargo/registry
+          key: ${{ matrix.os }}-cargo-${{ hashFiles('Cargo.lock') }}
+          restore-keys: |
+            ${{ matrix.os }}-cargo-
+
+      - name: Run tests
+        run: cargo test --verbose

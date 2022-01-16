@@ -64,8 +64,11 @@ pub trait OpenRGBWritableStream: AsyncWriteExt + Sized + Send + Sync + Unpin {
     }
 
     async fn write_packet<I: OpenRGBWritable>(&mut self, protocol: u32, device_id: u32, packet_id: PacketId, data: I) -> Result<(), OpenRGBError> {
-        self.write_header(protocol, device_id, packet_id, data.size(protocol)).await?;
-        self.write_value(data, protocol).await
+        let mut buf: Vec<u8> = Vec::new();
+        buf.write_header(protocol, device_id, packet_id, data.size(protocol)).await?;
+        buf.write_value(data, protocol).await?;
+        self.write(&buf).await?;
+        Ok(())
     }
 }
 
@@ -82,3 +85,5 @@ impl OpenRGBReadableStream for TcpStream {}
 impl OpenRGBWritableStream for TcpStream {}
 
 impl OpenRGBStream for TcpStream {}
+
+impl OpenRGBWritableStream for Vec<u8> {}

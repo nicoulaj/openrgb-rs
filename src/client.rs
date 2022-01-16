@@ -211,7 +211,7 @@ impl<S: OpenRGBStream> OpenRGB<S> {
             self.protocol,
             0,
             RequestLoadProfile,
-            name.into(),
+            RawString(name.into()),
         ).await
     }
 

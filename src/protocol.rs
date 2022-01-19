@@ -64,8 +64,23 @@ pub trait OpenRGBWritableStream: AsyncWriteExt + Sized + Send + Sync + Unpin {
     }
 
     async fn write_packet<I: OpenRGBWritable>(&mut self, protocol: u32, device_id: u32, packet_id: PacketId, data: I) -> Result<(), OpenRGBError> {
-        self.write_header(protocol, device_id, packet_id, data.size(protocol)).await?;
-        self.write_value(data, protocol).await
+        let size = data.size(protocol);
+
+        // in debug builds, use intermediate buffer to ease debugging with Wireshark (see #3)
+        #[cfg(debug_assertions)] {
+            let mut buf: Vec<u8> = Vec::with_capacity(4 /* magic */ + 4 /* device id */ + 4 /* packet id */ + 4 /* len */ + size /* payload size*/);
+            buf.write_header(protocol, device_id, packet_id, size).await?;
+            buf.write_value(data, protocol).await?;
+            self.write(&buf).await?;
+        }
+
+        // in release builds, write directly
+        #[cfg(not(debug_assertions))] {
+            self.write_header(protocol, device_id, packet_id, size).await?;
+            self.write_value(data, protocol).await?;
+        }
+
+        Ok(())
     }
 }
 
@@ -82,3 +97,6 @@ impl OpenRGBReadableStream for TcpStream {}
 impl OpenRGBWritableStream for TcpStream {}
 
 impl OpenRGBStream for TcpStream {}
+
+#[cfg(debug_assertions)]
+impl OpenRGBWritableStream for Vec<u8> {}

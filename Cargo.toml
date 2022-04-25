@@ -24,6 +24,6 @@ thiserror = "1.0.30"
 tokio = { version = "1.15.0", default-features = false, features = ["rt-multi-thread", "net", "sync", "io-util"] }
 
 [dev-dependencies]
-simplelog = "0.11.1"
+simplelog = "0.12.0"
 tokio-test = "0.4.2"
 tokio = { version = "1.15.0", default-features = false, features = ["macros"] }

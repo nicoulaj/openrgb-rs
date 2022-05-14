@@ -42,7 +42,7 @@ pub trait OpenRGBReadableStream: AsyncReadExt + Sized + Send + Sync + Unpin {
     }
 
     async fn read_packet<O: OpenRGBReadable>(&mut self, protocol: u32, expected_device_id: u32, expected_packet_id: PacketId) -> Result<O, OpenRGBError> {
-        let _len = self.read_header(protocol, expected_device_id, expected_packet_id).await?;
+        self.read_header(protocol, expected_device_id, expected_packet_id).await?;
         // TODO check header length vs actual read length
         self.read_value(protocol).await
     }
@@ -71,7 +71,7 @@ pub trait OpenRGBWritableStream: AsyncWriteExt + Sized + Send + Sync + Unpin {
             let mut buf: Vec<u8> = Vec::with_capacity(4 /* magic */ + 4 /* device id */ + 4 /* packet id */ + 4 /* len */ + size /* payload size*/);
             buf.write_header(protocol, device_id, packet_id, size).await?;
             buf.write_value(data, protocol).await?;
-            self.write(&buf).await?;
+            self.write_all(&buf).await?;
         }
 
         // in release builds, write directly

@@ -13,7 +13,7 @@ keywords = ["RGB", "LED", "gaming"]
 categories = ["network-programming", "game-development"]
 
 [dependencies]
-array2d = "0.2.1"
+array2d = "0.3.0"
 async-trait = "0.1.53"
 enum-primitive-derive = "0.2.2"
 flagset = "0.4.3"
